@@ -44,10 +44,12 @@ entrenar_modelo(modelo, datos_entrada, etiquetas_salida)
 ultimoDato =  obtenerUltimoDato()
 
 
-
 if ultimoDato:
-    datos_entrada = np.array([ultimoDato["distancia"], ultimoDato["velocidad"], ultimoDato["angulo"]], dtype=float)
-    #Predecir con los datos obtenidos de la base
+    # Crear el array con los datos y agregar una dimensión extra para el batch
+    datos_entrada = np.array([[ultimoDato["distancia"], ultimoDato["velocidad"], ultimoDato["angulo"]]], dtype=float)
+    # Ahora datos_entrada tendrá la forma (1, 3)
+
+    # Predecir con los datos obtenidos de la base
     prediccion = modelo.predict(datos_entrada)
     movimiento, distancia_futura = prediccion[0]
 
@@ -58,5 +60,5 @@ if ultimoDato:
     mostrar_resultados(movimiento_clasificado, distancia_futura)
 
 else:
-    print("Error, no se pudo obtener el ultimo dato de la base")
+    print("Error, no se pudo obtener el último dato de la base")
     datos_entrada = None
