@@ -1,4 +1,6 @@
 import os
+import time
+
 import numpy as np
 
 from conexionDB import obtenerUltimoDato
@@ -40,25 +42,27 @@ etiquetas_salida = np.array([
 modelo = crear_modelo()
 entrenar_modelo(modelo, datos_entrada, etiquetas_salida)
 
-#consultar la Rasberry pi
-ultimoDato =  obtenerUltimoDato()
 
 
-if ultimoDato:
-    # Crear el array con los datos y agregar una dimensión extra para el batch
-    datos_entrada = np.array([[ultimoDato["distancia"], ultimoDato["velocidad"], ultimoDato["angulo"]]], dtype=float)
-    # Ahora datos_entrada tendrá la forma (1, 3)
+while(True):
+    #consultar la Rasberry pi
+    ultimoDato =  obtenerUltimoDato()
+    if ultimoDato:
+        # Crear el array con los datos y agregar una dimensión extra para el batch
+        datos_entrada = np.array([[ultimoDato["distancia"], ultimoDato["velocidad"], ultimoDato["angulo"]]], dtype=float)
+        # Ahora datos_entrada tendrá la forma (1, 3)
 
-    # Predecir con los datos obtenidos de la base
-    prediccion = modelo.predict(datos_entrada)
-    movimiento, distancia_futura = prediccion[0]
+        # Predecir con los datos obtenidos de la base
+        prediccion = modelo.predict(datos_entrada)
+        movimiento, distancia_futura = prediccion[0]
 
-    # Clasificación del movimiento
-    movimiento_clasificado = clasificar_movimiento(movimiento)
+        # Clasificación del movimiento
+        movimiento_clasificado = clasificar_movimiento(movimiento)
 
-    # Mostrar resultados
-    mostrar_resultados(movimiento_clasificado, distancia_futura)
+        # Mostrar resultados
+        mostrar_resultados(movimiento_clasificado, distancia_futura)
 
-else:
-    print("Error, no se pudo obtener el último dato de la base")
-    datos_entrada = None
+    else:
+        print("Error, no se pudo obtener el último dato de la base")
+        datos_entrada = None
+    time.sleep(3)
